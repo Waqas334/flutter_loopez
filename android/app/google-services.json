@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "894569812257",
+    "firebase_url": "https://fast-battery-charger-and-saver.firebaseio.com",
+    "project_id": "fast-battery-charger-and-saver",
+    "storage_bucket": "fast-battery-charger-and-saver.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:894569812257:android:00fb2da9fdc995c219ae60",
+        "android_client_info": {
+          "package_name": "com.androidbull.flutter_loopez"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "894569812257-hp34o3ubcnm3hq633krfv9nmk1kujctj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDGzvhnTzVE95DtRg4QUQHe1APTIYwDig"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "894569812257-hp34o3ubcnm3hq633krfv9nmk1kujctj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
