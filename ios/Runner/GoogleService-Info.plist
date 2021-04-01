@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>894569812257-viika2hmn9kg92uob6hvslb82sqsa0fn.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.894569812257-viika2hmn9kg92uob6hvslb82sqsa0fn</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>894569812257-np95fi21e1nvrh7vh580a3mom172f85i.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCuQtnX8mZoBGKQ3E7hS55NutpudLkSKvA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>894569812257</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.androidbull.flutterLoopez</string>
+	<key>PROJECT_ID</key>
+	<string>fast-battery-charger-and-saver</string>
+	<key>STORAGE_BUCKET</key>
+	<string>fast-battery-charger-and-saver.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:894569812257:ios:910b732f066effe519ae60</string>
+	<key>DATABASE_URL</key>
+	<string>https://fast-battery-charger-and-saver.firebaseio.com</string>
+</dict>
+</plist>

@@ -1,11 +1,11 @@
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_loopez/screens/components/buttons/rounded_filled_button.dart';
-import 'package:flutter_loopez/screens/components/buttons/rounded_filled_text_button.dart';
-import 'package:flutter_loopez/screens/components/home_components/rounded_input_field.dart';
+import 'package:flutter_loopez/components/buttons/rounded_filled_text_button.dart';
+import 'package:flutter_loopez/constants.dart';
 import 'package:flutter_loopez/screens/sign%20up/phone_number_verification.dart';
 
 class SignUpWithPhoneNumber extends StatefulWidget {
@@ -16,6 +16,11 @@ class SignUpWithPhoneNumber extends StatefulWidget {
 class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
   final _focusNode = FocusNode();
   Color _strokeColor = Colors.black;
+  String _phoneNumber;
+  bool _isErrorVisible = false;
+  String _errorMessage = 'Invalid Phone Number';
+  bool _isProgressVisible = false;
+  String _tempTestPhoneNumber = '+11111111111';
   @override
   void initState() {
     _focusNode.addListener(
@@ -27,7 +32,10 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
           });
         } else {
           setState(() {
-            _strokeColor = Colors.black;
+            if (_isErrorVisible)
+              _strokeColor = Colors.red;
+            else
+              _strokeColor = Colors.black;
           });
         }
       },
@@ -38,13 +46,19 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
     if (_focusNode.hasFocus) {
       _focusNode.unfocus();
     }
+    if (_isProgressVisible) {
+      setState(
+        () {
+          _isProgressVisible = false;
+        },
+      );
+    }
 
     return false;
   }
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     return WillPopScope(
       onWillPop: _willPopScope,
       child: SafeArea(
@@ -58,6 +72,7 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                //Back Button
                 InkWell(
                   onTap: () {
                     Navigator.pop(context);
@@ -71,6 +86,7 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
                     ),
                   ),
                 ),
+                //Enter Phone Number
                 Container(
                   padding: EdgeInsets.only(bottom: 100),
                   child: Padding(
@@ -80,10 +96,7 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
                       children: [
                         Text(
                           'Enter Your Phone',
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold),
+                          style: kTextStyleHeadline,
                         ),
                         Text('We will send a confirmation code to your phone'),
                         SizedBox(
@@ -108,34 +121,49 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
                               Expanded(
                                 child: TextField(
                                   focusNode: _focusNode,
-                                  style: TextStyle(fontSize: 20),
+                                  onChanged: (value) {
+                                    _phoneNumber = value;
+                                    setState(() {
+                                      _isErrorVisible = false;
+                                    });
+                                  },
+                                  style: TextStyle(
+                                      fontSize: 20, letterSpacing: 10),
                                   keyboardType: TextInputType.number,
-                                  decoration:
-                                      InputDecoration(border: InputBorder.none),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    counterStyle: TextStyle(
+                                      height: double.minPositive,
+                                    ),
+                                    counterText: "",
+                                  ),
                                   maxLines: 1,
+                                  maxLength: 11,
                                   textInputAction: TextInputAction.done,
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        Visibility(
+                          visible: _isErrorVisible,
+                          child: Text(
+                            _errorMessage,
+                            style: TextStyle(
+                              color: Colors.red,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.70,
-                      child: Center(
-                        child: RoundTextButton(
-                          label: 'Next',
-                          onClick: _nextOnClick,
-                        ),
-                      ),
-                    ),
-                  ],
+                // Next button
+
+                RoundTextButton(
+                  label: 'Next',
+                  onClick: _nextOnClick,
+                  inProgress: _isProgressVisible,
                 ),
               ],
             ),
@@ -153,9 +181,63 @@ class _SignUpWithPhoneNumberState extends State<SignUpWithPhoneNumber> {
 
   void _nextOnClick() {
     print('Button clicked');
+
+    _gotoVerificationScreen('verificationId');
+    return;
+
+    if (_isProgressVisible) return;
+
+    if (_phoneNumber == null ||
+        _phoneNumber == '' ||
+        _phoneNumber.length < 10) {
+      setState(() {
+        _strokeColor = Colors.red;
+        _isErrorVisible = true;
+      });
+    } else {
+      setState(() {
+        _isProgressVisible = true;
+        _sendCode();
+      });
+    }
+  }
+
+  void _sendCode() {
+    FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: _tempTestPhoneNumber,
+//      phoneNumber: '+92' + _phoneNumber,
+      verificationCompleted: (PhoneAuthCredential phoneAuthCredential) {
+        //TODO Handle verificationCompleted happens in Android
+        print('Verification Completed: ${phoneAuthCredential.asMap()}');
+      },
+      verificationFailed: (FirebaseAuthException error) {
+        print('Verification Failed: ${error.message}');
+
+        setState(() {
+          _isErrorVisible = true;
+          _errorMessage = error.message;
+        });
+      },
+      codeSent: (String verificationId, int forceResendingToken) {
+        print('Code sent with verification ID: $verificationId');
+        setState(() {
+          _isProgressVisible = false;
+        });
+        _gotoVerificationScreen(verificationId);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        print('CodeAutoRetrievalTimeout with verification ID: $verificationId');
+      },
+    );
+  }
+
+  void _gotoVerificationScreen(String verificationId) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => PhoneNumberVerification()),
+      MaterialPageRoute(
+        builder: (context) =>
+            PhoneNumberVerification(verificationId: verificationId),
+      ),
     );
   }
 }

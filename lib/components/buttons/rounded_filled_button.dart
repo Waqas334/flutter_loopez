@@ -1,28 +1,26 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_loopez/constants.dart';
 
-import '../../../constants.dart';
-
-class RoundedFilledButton extends StatelessWidget {
+class RoundedStrokeButton extends StatelessWidget {
   String label;
-  IconData icon;
-  Function onButtonClick;
+  Widget icon;
+  Function onClick;
   Widget image;
 
-  RoundedFilledButton({this.label, this.icon, this.onButtonClick, this.image});
+  RoundedStrokeButton({this.label, this.icon, this.onClick, this.image});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onButtonClick,
+      onTap: onClick,
       child: Container(
         margin: EdgeInsets.all(4),
         padding: EdgeInsets.all(4),
         decoration: BoxDecoration(
-          color: Colors.blue,
           shape: BoxShape.rectangle,
           borderRadius: BorderRadius.circular(kButtonCornerRadius),
-//          border: Border.all(color: Colors.black),
+          border: Border.all(color: Colors.black),
         ),
         child: Row(
           children: [
@@ -31,19 +29,13 @@ class RoundedFilledButton extends StatelessWidget {
               alignment: Alignment.center,
               width: 30,
               height: 30,
-              child: (icon == null)
-                  ? image
-                  : Icon(
-                      icon,
-                      color: Colors.white,
-                    ),
+              child: (icon == null) ? image : icon,
             ),
             Padding(
               padding: const EdgeInsets.only(left: 20.0),
               child: Text(
                 label,
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white),
               ),
             ),
           ],
