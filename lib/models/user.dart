@@ -5,6 +5,7 @@ import 'package:flutter_loopez/constants.dart';
 class User {
   String _phoneNumber;
   String _someThingAboutYou;
+  List<String> myAdsIds;
 
 //  User({this.phoneNumber, this.someThingAboutYou});
   User({String phoneNumber, String someThingAboutYou})

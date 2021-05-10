@@ -1,21 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_loopez/components/ad_item.dart';
 import 'package:flutter_loopez/constants.dart';
+import 'package:flutter_loopez/model/ad.dart';
+import 'package:flutter_loopez/model/ads.dart';
+import 'package:flutter_loopez/model/new_user_model.dart';
+
 import 'package:flutter_loopez/screens/sign%20up/signup_welcome_screen.dart';
 import 'package:flutter_loopez/screens/user_setting_screen.dart';
-
-import '../main.dart';
+import 'package:provider/provider.dart';
 
 class MyAccount extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var currentUser = FirebaseAuth.instance.currentUser;
+    NewUserModel userModel = Provider.of<NewUserModel>(context);
+    Ads adsProvider = Provider.of<Ads>(context);
+    print('User model in my account ${userModel}');
 
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: 8.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -65,12 +74,78 @@ class MyAccount extends StatelessWidget {
                                 : 'View and edit profile',
                             style: kTextStyleClickable,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),
                 )
               ],
+            ),
+            //Add some shimmer/dummy cards here
+            SizedBox(
+              height: 30,
+            ),
+            // if (!currentUser.isAnonymous)
+            Container(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'Your Ads',
+                    style: kTextStyleSubheading,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                      height: MediaQuery.of(context).size.height * 0.4,
+                      child: StreamBuilder<DocumentSnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection(kUsers)
+                            .doc(currentUser.uid)
+                            .snapshots(),
+                        builder: (context, documentSnapshot) {
+                          if (documentSnapshot.hasError ||
+                              documentSnapshot.data == null) {
+                            return Container(
+                              child: Center(
+                                child: Text(
+                                    'Something went wrong with fetching: ${documentSnapshot.error.toString()}'),
+                              ),
+                            );
+                          } else {
+                            var myAds;
+                            try {
+                              myAds = documentSnapshot.data?.data();
+                              return ListView.separated(
+                                separatorBuilder:
+                                    (BuildContext context, int index) =>
+                                        SizedBox(
+                                  height: 10,
+                                ),
+                                itemBuilder: (context, count) {
+                                  return FutureBuilder(
+                                    builder: (context, ad) =>
+                                        AdItem(ad: ad.data),
+                                    future: adsProvider
+                                        .findAdByIdFromFirestore(myAds[count]),
+                                  );
+                                },
+                                itemCount: myAds.length,
+                              );
+                            } catch (e) {
+                              print(
+                                  'Something went wrong with fetching my ads: $e');
+                              return Container();
+                            }
+                          }
+                        },
+                      )),
+                ],
+              ),
             )
           ],
         ),
@@ -79,7 +154,11 @@ class MyAccount extends StatelessWidget {
   }
 
   void _viewAndEditProfileClicked(BuildContext context) {
-    Navigator.pushNamed(context, UserSetting.name);
+    // Navigator.pushNamed(context, UserSetting.name);
+    // print('View and edit profile clicked');
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return UserSetting();
+    }));
   }
 
   void _logInClicked(context) {

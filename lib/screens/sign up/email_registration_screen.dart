@@ -7,7 +7,7 @@ import 'package:flutter_loopez/components/buttons/rounded_filled_text_button.dar
 import 'package:flutter_loopez/components/buttons/rounded_stroke_textfield.dart';
 import 'package:flutter_loopez/screens/home_screen.dart';
 import 'package:flutter_loopez/screens/sign%20up/email_login_screen.dart';
-import 'package:flutter_loopez/screens/temp_bottom_navigation.dart';
+import 'package:flutter_loopez/screens/landing_screen.dart';
 import 'package:flutter_loopez/utils.dart';
 
 import '../../constants.dart';

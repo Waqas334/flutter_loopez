@@ -10,7 +10,7 @@ import 'package:flutter_loopez/components/buttons/rounded_stroke_textfield.dart'
 import 'package:flutter_loopez/constants.dart';
 import 'package:flutter_loopez/screens/home_screen.dart';
 import 'package:flutter_loopez/screens/sign%20up/email_registration_screen.dart';
-import 'package:flutter_loopez/screens/temp_bottom_navigation.dart';
+import 'package:flutter_loopez/screens/landing_screen.dart';
 
 import '../../utils.dart';
 

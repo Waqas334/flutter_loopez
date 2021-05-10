@@ -12,16 +12,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_loopez/components/buttons/responsive_button.dart';
 import 'package:flutter_loopez/components/buttons/progress_indicating_button.dart';
-import 'package:flutter_loopez/components/buttons/rounded_filled_text_button.dart';
-import 'package:flutter_loopez/components/home_components/rounded_button.dart';
+import 'package:flutter_loopez/model/new_user_model.dart';
 import 'package:flutter_loopez/models/user.dart' as local;
 import 'package:flutter_loopez/screens/sign%20up/signup_welcome_screen.dart';
-import 'package:flutter_loopez/screens/temp_bottom_navigation.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart';
+import 'package:provider/provider.dart';
 
 import '../constants.dart';
-import '../main.dart';
 
 class UserSetting extends StatelessWidget {
   static var name = '/editProfile';
@@ -162,7 +159,9 @@ class _UserBodyState extends State<UserBody> {
 
   @override
   Widget build(BuildContext context) {
-//    isPhoneNumberVerified = false;
+    NewUserModel model = Provider.of<NewUserModel>(context);
+    print('User model data: ${model.toString()}');
+
     return SafeArea(
       child: GestureDetector(
         onTap: () {
@@ -412,10 +411,12 @@ class _UserBodyState extends State<UserBody> {
   _verifyPhoneNumberClicked(BuildContext context) async {
 //  We need to check if this phone number is current assigned to someone else or not
     String duplicateCheck = await _checkDuplicatePhoneNumber();
-    setState(() {
-      _phoneNumberErrorText = duplicateCheck;
-    });
-    return;
+    if (duplicateCheck != null) {
+      setState(() {
+        _phoneNumberErrorText = duplicateCheck;
+      });
+      return;
+    }
     if (phoneNumber.length > 0) {
       showModalBottomSheet(
         backgroundColor: Colors.transparent,
@@ -424,7 +425,8 @@ class _UserBodyState extends State<UserBody> {
           var verifyButtonState = GlobalKey<ProgressIndicatingButtonState>();
           return VerifyPhoneNumberBottomSheet(
             verifyButtonState: verifyButtonState,
-            phoneNumber: phoneNumber,
+            phoneNumber: '+11111111111',
+            // phoneNumber: '+92'+phoneNumber,
             currentUser: currentUser,
           );
         },
@@ -527,10 +529,13 @@ class _UserBodyState extends State<UserBody> {
       //Number already exists
       setState(() {
         _phoneNumberErrorText = duplicateCheck;
+        existingPhoneNumber = phoneNumber;
       });
 
       Navigator.pop(context);
       return;
+    } else {
+      _phoneNumberErrorText = null;
     }
 
     _user.phoneNumber = (existingPhoneNumber != phoneNumber)
@@ -617,6 +622,7 @@ class _VerifyPhoneNumberBottomSheetState
 
   @override
   Widget build(BuildContext context) {
+    print("Verifying following phone Number: ${widget.phoneNumber}");
     return Container(
       padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
       decoration: BoxDecoration(
@@ -715,6 +721,11 @@ class _VerifyPhoneNumberBottomSheetState
                       widget.verifyButtonState.currentState.setDoneState();
                     } on FirebaseAuthException catch (e) {
                       print('FirebaseAuthException was caught: ${e.message}');
+                      print('Verification Failed: ${e.message}');
+                      widget.verifyButtonState.currentState.setErrorState();
+                      setState(() {
+                        errorMessage = e.message;
+                      });
                     } catch (e) {
                       widget.verifyButtonState.currentState.setErrorState();
                       print(

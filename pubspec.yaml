@@ -41,17 +41,27 @@ dependencies:
   http: ^0.13.1
 
 
-  flutter_svg: ^0.19.3
+  flutter_svg: ^0.22.0
+
   image_picker: ^0.7.2+1
   flutter_facebook_login: ^3.0.0
 
   permission_handler: ^6.1.1
   app_settings: 4.1.0
 
+  provider: ^5.0.0
+  
+  file_picker: ^3.0.1
+  intl: ^0.17.0
+  location: ^4.1.1
+  geocoder: ^0.2.1
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -67,6 +77,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/user/
+    - assets/category_icons/
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
